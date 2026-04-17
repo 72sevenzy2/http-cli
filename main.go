@@ -31,8 +31,8 @@ func main() {
 	}
 
 	if *headers != "" {
-		headerPairs := strings.Split(*headers, ",")
-		for _, h := range headerPairs {
+		headerPairs := strings.SplitSeq(*headers, ",")
+		for h := range headerPairs {
 			parts := strings.SplitN(h, ":", 2)
 			if len(parts) == 2 {
 				req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
