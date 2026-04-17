@@ -24,23 +24,22 @@ func main() {
 
 	url := flag.Args()[0]
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil) // initialising an http request
 	if err != nil {
 		log.Fatal(err.Error())
-		return
 	}
 
 	if *headers != "" {
-		headerPairs := strings.SplitSeq(*headers, ",")
+		headerPairs := strings.SplitSeq(*headers, ",") // split each header by a commar (SplitSeq then returns a string array containing the sorted headers)
 		for h := range headerPairs {
-			parts := strings.SplitN(h, ":", 2)
+			parts := strings.SplitN(h, ":", 2) // splitting each header by key:value pairs 
 			if len(parts) == 2 {
-				req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+				req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])) // trim the input if any redundant " " (spaces) are included when user sets headers
 			}
 		}
 	}
 
-	client := &http.Client{}
+	client := &http.Client{} // initialising the client
 
 	// latency tracking
 	start := time.Now()
@@ -49,35 +48,33 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err.Error())
-		return
 	}
 
-	defer resp.Body.Close()
+	defer resp.Body.Close() // important as not closing resp.Body would lead to performance issues + leaks, aswell as its apart of the ReadCloser interface so it has be closed.
 
 	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		log.Fatal(err.Error())
-		return
 	}
 
 	// outputting
 
 	fmt.Println("status:", resp.Status)
-	fmt.Println("latency:", end)
+	fmt.Println("latency:", end) // printing latency
 
 	fmt.Println("\nheaders:")
 	for k, v := range resp.Header {
-		fmt.Println(k+":", v)
+		fmt.Println(k+":", v) // key:value output style for headers
 	}
 
 	fmt.Println("\nbody:")
 
-	var format bytes.Buffer
+	var format bytes.Buffer // pretty printed body will be stored here before outputted
 
 	err = json.Indent(&format, body, "", "  ")
 	if err == nil {
-		log.Fatal(format.String())
+		fmt.Println(format.String())
 	} else {
 		fmt.Println(string(body))
 	}
