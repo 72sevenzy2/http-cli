@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	if len(flag.Args()) < 1 {
-		fmt.Println("usage > http-tester <URL> [-H key:value]")
+		fmt.Println("usage > main.go <URL> [-H key:value]")
 		return
 	}
 
