@@ -1,4 +1,4 @@
-#h2 pre-requisites: make sure you have go installed:
+ pre-requisites: make sure you have go installed: 
 ```
 go -v
 ```
