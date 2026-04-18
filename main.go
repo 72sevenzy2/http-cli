@@ -12,8 +12,22 @@ import (
 	"time"
 )
 
+// custom type for composable header inputs
+type HeaderFlags []string
+
+func (h *HeaderFlags) String() string {
+	return fmt.Sprint(*h)
+}
+
+func (h *HeaderFlags) Set(value string) error {
+	*h = append(*h, value)
+	return nil
+}
+
 func main() {
-	headers := flag.String("H", "", "Headers (key:value,key:value)")
+	var headers HeaderFlags
+
+	flag.Var(&headers, "H", "Header (key:value)")
 
 	flag.Parse()
 
@@ -29,12 +43,17 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	if *headers != "" {
-		headerPairs := strings.SplitSeq(*headers, ",") // split each header by a commar (SplitSeq then returns a string array containing the sorted headers)
-		for h := range headerPairs {
+	if len(headers) > 0 {
+		for _, h := range headers { // headers returns a string array
 			parts := strings.SplitN(h, ":", 2) // splitting each header by key:value pairs 
 			if len(parts) == 2 {
 				req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])) // trim the input if any redundant " " (spaces) are included when user sets headers
+			}
+
+			// error handling if give invalid header inputs
+			if len(parts) != 2 || len(parts) > 2 {
+				log.Fatalf("invalid input type %s", h)
+				return
 			}
 		}
 	}
