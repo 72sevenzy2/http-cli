@@ -1,7 +1,18 @@
-# USAGE
+pre-requisites: make sure you have go installed:
+```
+go -v
+```
+or
+```
+go --v
+```
 
-# for headers
+for setting headers while testing:
+```
 go run main.go <URL> [-H key:value]
+```
 
-# for non headers
-go run main.go <URL> 
+without settings headers:
+```
+go run main.go <URL>
+``` 
