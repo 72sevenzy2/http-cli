@@ -24,6 +24,13 @@ func (h *HeaderFlags) Set(value string) error {
 	return nil
 }
 
+func validate(args []string, bound int) error {
+	if len(args) < bound {
+		return fmt.Errorf("usage > main.go <URL> [-H key:value]")
+	}
+	return nil
+}
+
 func main() {
 	var headers HeaderFlags
 
@@ -31,8 +38,8 @@ func main() {
 
 	flag.Parse()
 
-	if len(flag.Args()) < 1 {
-		fmt.Println("usage > main.go <URL> [-H key:value]")
+	if err := validate(flag.Args(), 2); err != nil {
+		fmt.Println(err.Error())
 		return
 	}
 
@@ -45,16 +52,25 @@ func main() {
 
 	if len(headers) > 0 {
 		for _, h := range headers { // headers returns a string array
-			parts := strings.SplitN(h, ":", 2) // splitting each header by key:value pairs 
-			if len(parts) == 2 {
-				req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])) // trim the input if any redundant " " (spaces) are included when user sets headers
-			}
-
-			// error handling if give invalid header inputs
-			if len(parts) != 2 || len(parts) > 2 {
+			parts := strings.SplitN(h, ":", 2) // splitting each header by key:value pairs
+			if len(parts) != 2 {
 				log.Fatalf("invalid input type %s", h)
 				return
 			}
+			req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])) // trimSpace removes any un-needed spaces in the input if present.
+
+
+			// optimised code above ^.
+
+			// if len(parts) == 2 {
+			// 	req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])) // trim the input if any redundant " " (spaces) are included when user sets headers
+			// }
+
+			// // error handling if give invalid header inputs
+			// if len(parts) != 2 || len(parts) > 2 {
+			// 	log.Fatalf("invalid input type %s", h)
+			// 	return
+			// }
 		}
 	}
 
