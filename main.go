@@ -39,7 +39,7 @@ func main() {
 	flag.Parse()
 
 	if err := validate(flag.Args(), 2); err != nil {
-		fmt.Println("usage > main.go <URL> [-H key:value]")
+		fmt.Println(err.Error())
 		return
 	}
 
