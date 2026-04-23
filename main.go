@@ -103,6 +103,9 @@ func main() {
 		fmt.Println(k+":", v) // key:value output style for headers
 	}
 
+	fmt.Println("\nresponse size:")
+	fmt.Println(len(body), "bytes")
+
 	fmt.Println("\nbody:")
 
 	var format bytes.Buffer // pretty printed body will be stored here before outputted
