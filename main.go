@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -26,7 +27,8 @@ func (h *HeaderFlags) Set(value string) error {
 
 func validate(args []string, bound int) error {
 	if len(args) < bound {
-		return fmt.Errorf("usage > main.go <URL> [-H key:value]")
+		UsageMsg := errors.New("usgae > main.go <URL> [-H key:value]")
+		return fmt.Errorf("%s", UsageMsg.Error())
 	}
 	return nil
 }
