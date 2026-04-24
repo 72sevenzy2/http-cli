@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -37,6 +38,7 @@ func main() {
 	var headers HeaderFlags
 
 	flag.Var(&headers, "H", "Header (key:value)")
+	stream := flag.Bool("stream", false, "live response") // for streaming live response
 
 	flag.Parse()
 
@@ -76,33 +78,40 @@ func main() {
 
 	defer resp.Body.Close() // important as not closing resp.Body would lead to performance issues + leaks, aswell as its apart of the ReadCloser interface so it has be closed.
 
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	// outputting
-
-	fmt.Println("status:", resp.Status)
-	fmt.Println("latency:", end) // printing latency
-
-	fmt.Println("\nheaders:")
-	for k, v := range resp.Header {
-		fmt.Println(k+":", v) // key:value output style for headers
-	}
-
-	fmt.Println("\nresponse size:")
-	fmt.Println(len(body), "bytes")
-
-	fmt.Println("\nbody:")
-
-	var format bytes.Buffer // pretty printed body will be stored here before outputted
-
-	err = json.Indent(&format, body, "", "  ")
-	if err == nil {
-		fmt.Println(format.String())
+	if *stream {
+		_, err := io.Copy(os.Stdout, resp.Body)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	} else {
-		fmt.Println(string(body))
+		body, err := io.ReadAll(resp.Body)
+
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		// outputting
+
+		fmt.Println("status:", resp.Status)
+		fmt.Println("latency:", end) // printing latency
+
+		fmt.Println("\nheaders:")
+		for k, v := range resp.Header {
+			fmt.Println(k+":", v) // key:value output style for headers
+		}
+
+		fmt.Println("\nresponse size:")
+		fmt.Println(len(body), "bytes")
+
+		fmt.Println("\nbody:")
+
+		var format bytes.Buffer // pretty printed body will be stored here before outputted
+
+		err = json.Indent(&format, body, "", "  ")
+		if err == nil {
+			fmt.Println(format.String())
+		} else {
+			fmt.Println(string(body))
+		}
 	}
 }
