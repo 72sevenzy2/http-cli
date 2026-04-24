@@ -19,4 +19,9 @@ go run main.go <URL> [-H key:value]
 without settings headers:
 ```
 go run main.go <URL>
-``` 
+```
+
+with streaming enabled: (streaming gives live response data back.)
+```
+go run main.go <URL> [-H key:value] -stream <true/false>
+```
