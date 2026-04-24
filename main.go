@@ -60,19 +60,6 @@ func main() {
 				return
 			}
 			req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])) // trimSpace removes any un-needed spaces in the input if present.
-
-
-			// optimised code above ^.
-
-			// if len(parts) == 2 {
-			// 	req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])) // trim the input if any redundant " " (spaces) are included when user sets headers
-			// }
-
-			// // error handling if give invalid header inputs
-			// if len(parts) != 2 || len(parts) > 2 {
-			// 	log.Fatalf("invalid input type %s", h)
-			// 	return
-			// }
 		}
 	}
 
