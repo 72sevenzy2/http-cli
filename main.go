@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -33,15 +34,31 @@ func validate(args []string, bound int) error {
 	return nil
 }
 
+// func for adding headers
+func addHeaders(req *http.Request, args HeaderFlags) error {
+	for _, h := range args {
+		parts := strings.SplitN(h, ":", 2)
+		if len(parts) != 2 {
+			return fmt.Errorf("invalid input type %s", h)
+		}
+
+		// appending errors
+		req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+	}
+	return nil
+}
+
 func main() {
 	var headers HeaderFlags
 
 	flag.Var(&headers, "H", "Header (key:value)")
+	stream := flag.Bool("stream", false, "live response") // for streaming live response
 
 	flag.Parse()
 
 	if err := validate(flag.Args(), 2); err != nil {
-		fmt.Println(err.Error())
+		errM := errors.New(err.Error())
+		fmt.Println(errM)
 		return
 	}
 
@@ -50,17 +67,13 @@ func main() {
 	req, err := http.NewRequest("GET", url, nil) // initialising an http request
 	if err != nil {
 		log.Fatal(err.Error())
+		return
 	}
 
-	if len(headers) > 0 {
-		for _, h := range headers { // headers returns a string array
-			parts := strings.SplitN(h, ":", 2) // splitting each header by key:value pairs
-			if len(parts) != 2 {
-				log.Fatalf("invalid input type %s", h)
-				return
-			}
-			req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])) // trimSpace removes any un-needed spaces in the input if present.
-		}
+	// add heders
+	if err := addHeaders(req, headers); err != nil {
+		fmt.Println(err.Error())
+		return
 	}
 
 	client := &http.Client{} // initialising the client
@@ -72,37 +85,47 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err.Error())
+		return
 	}
 
 	defer resp.Body.Close() // important as not closing resp.Body would lead to performance issues + leaks, aswell as its apart of the ReadCloser interface so it has be closed.
 
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	// outputting
-
-	fmt.Println("status:", resp.Status)
-	fmt.Println("latency:", end) // printing latency
-
-	fmt.Println("\nheaders:")
-	for k, v := range resp.Header {
-		fmt.Println(k+":", v) // key:value output style for headers
-	}
-
-	fmt.Println("\nresponse size:")
-	fmt.Println(len(body), "bytes")
-
-	fmt.Println("\nbody:")
-
-	var format bytes.Buffer // pretty printed body will be stored here before outputted
-
-	err = json.Indent(&format, body, "", "  ")
-	if err == nil {
-		fmt.Println(format.String())
+	if *stream {
+		_, err := io.Copy(os.Stdout, resp.Body)
+		if err != nil {
+			log.Fatal(err.Error())
+			return
+		}
 	} else {
-		fmt.Println(string(body))
+		body, err := io.ReadAll(resp.Body)
+
+		if err != nil {
+			log.Fatal(err.Error())
+			return
+		}
+
+		// outputting
+
+		fmt.Println("status:", resp.Status)
+		fmt.Println("latency:", end) // printing latency
+
+		fmt.Println("\nheaders:")
+		for k, v := range resp.Header {
+			fmt.Println(k+":", v) // key:value output style for headers
+		}
+
+		fmt.Println("\nresponse size:")
+		fmt.Println(len(body), "bytes")
+
+		fmt.Println("\nbody:")
+
+		var format bytes.Buffer // pretty printed body will be stored here before outputted
+
+		err = json.Indent(&format, body, "", "  ")
+		if err == nil {
+			fmt.Println(format.String())
+		} else {
+			fmt.Println(string(body))
+		}
 	}
 }
