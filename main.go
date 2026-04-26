@@ -76,7 +76,9 @@ func main() {
 		return
 	}
 
-	client := &http.Client{} // initialising the client
+	client := &http.Client{
+		Timeout: 10 * time.Second, // timeout so that request doesnt last forever
+	} // initialising the client
 
 	// latency tracking
 	start := time.Now()
