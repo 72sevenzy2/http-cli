@@ -104,6 +104,11 @@ func main() {
 			return
 		}
 
+		// checking if request failed if yes then log
+		if resp.StatusCode >= 400 { // anything over 400 means request wasnt successful
+			fmt.Println("request failed with status:", resp.Status)
+		}
+
 		// outputting
 
 		fmt.Println("status:", resp.Status)
