@@ -57,7 +57,8 @@ func main() {
 	flag.Parse()
 
 	if err := validate(flag.Args(), 2); err != nil {
-		fmt.Println(err.Error())
+		errM := errors.New(err.Error())
+		fmt.Println(errM)
 		return
 	}
 
