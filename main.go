@@ -26,8 +26,8 @@ func (h *HeaderFlags) Set(value string) error {
 	return nil
 }
 
-func validate(args []string, bound int) error {
-	if len(args) < bound {
+func validate(args []string) error {
+	if len(args) < 2 {
 		UsageMsg := errors.New("usage > main.go <URL> [-H key:value]")
 		return fmt.Errorf("%s", UsageMsg.Error())
 	}
@@ -56,7 +56,7 @@ func main() {
 
 	flag.Parse()
 
-	if err := validate(flag.Args(), 2); err != nil {
+	if err := validate(flag.Args()); err != nil {
 		fmt.Println(errors.New(err.Error()))
 		return
 	}
