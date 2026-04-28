@@ -43,7 +43,7 @@ func addHeaders(req *http.Request, args HeaderFlags) error {
 		}
 
 		// appending errors
-		req.Header.Add(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+		req.Header.Set(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
 	}
 	return nil
 }
