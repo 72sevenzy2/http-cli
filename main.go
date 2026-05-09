@@ -60,7 +60,7 @@ func main() {
 		fmt.Println(errors.New(err.Error()))
 		return
 	}
-
+	
 	url := flag.Args()[0]
 
 	req, err := http.NewRequest("GET", url, nil) // initialising an http request
