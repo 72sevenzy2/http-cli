@@ -53,7 +53,7 @@ func main() {
 
 	flag.Var(&headers, "H", "Header (key:value)")
 	stream := flag.Bool("stream", false, "live response") // for streaming live response
-	method := flag.String("X", "GET", "http method")
+	method := flag.String("x", "GET", "http method")
 
 	data := flag.String("d", "", "request data")
 
