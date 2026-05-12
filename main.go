@@ -17,60 +17,55 @@ import (
 // custom type for composable header inputs
 type HeaderFlags []string
 
-func (h *HeaderFlags) String() string {
-	return fmt.Sprint(*h)
-}
-
-func (h *HeaderFlags) Set(value string) error {
-	*h = append(*h, value)
-	return nil
-}
-
-func validate(args []string) error {
-	if len(args) < 2 {
-		UsageMsg := errors.New("usage > main.go <URL> [-H key:value]")
-		return fmt.Errorf("%s", UsageMsg.Error())
-	}
-	return nil
-}
-
-// func for adding headers
-func addHeaders(req *http.Request, args HeaderFlags) error {
-	for _, h := range args {
-		parts := strings.SplitN(h, ":", 2)
-		if len(parts) != 2 {
-			return fmt.Errorf("invalid input type %s", h)
-		}
-
-		// appending errors
-		req.Header.Set(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
-	}
-	return nil
-}
-
 func main() {
 	var headers HeaderFlags
 
 	flag.Var(&headers, "H", "Header (key:value)")
 	stream := flag.Bool("stream", false, "live response") // for streaming live response
+	method := flag.String("x", "GET", "http method")
+
+	data := flag.String("d", "", "request data")
 
 	flag.Parse()
 
-	if err := validate(flag.Args()); err != nil {
+	if err := Validate(flag.Args()); err != nil {
 		fmt.Println(errors.New(err.Error()))
 		return
 	}
 
 	url := flag.Args()[0]
 
-	req, err := http.NewRequest("GET", url, nil) // initialising an http request
+	// validating whether method given is appropriate (only support for post and get for now)
+	uc := strings.ToUpper(*method)
+
+	var v string
+	if 	uc == http.MethodGet || uc == http.MethodPost {
+		// fmt.Println("not a valid method")
+		// return
+		v = uc
+	} else {
+		// v = uc
+		fmt.Println("not a valid method")
+		return
+	}
+
+	// body reader for post data
+	var body io.Reader
+
+	if *data != "" {
+		body = strings.NewReader(*data)
+	}
+
+	req, err := http.NewRequest(v, url, body)
+
+	// req, err := http.NewRequest("GET", url, nil) // initialising an http request
 	if err != nil {
 		log.Fatal(err.Error())
 		return
 	}
 
 	// add heders
-	if err := addHeaders(req, headers); err != nil {
+	if err := AddHeaders(req, headers); err != nil {
 		fmt.Println(err.Error())
 		return
 	}
