@@ -2,17 +2,17 @@
 
 package main
 
-type key interface {
+type Key interface {
 	string | int // only supports these 2 types for now
 }
 
-type data[k key] struct {
+type Data[k Key] struct {
 	data_storage map[k]string // using generics to support only types string and int as key name.4
 }
 
 // new db
-func NewStore[k key]() *data[k] {
-	return &data[k]{
+func NewStore[k Key]() *Data[k] {
+	return &Data[k]{
 		make(map[k]string),
 	}
 }
@@ -20,12 +20,12 @@ func NewStore[k key]() *data[k] {
 // utility get/set functions for data map:
 
 // for strings
-func (d *data[k]) Get(keyname k) (string, bool) {
+func (d *Data[k]) Get(keyname k) (string, bool) {
 	val, ok := d.data_storage[keyname]
 	return val, ok
 }
 
-func (d *data[k]) Set(keyname k, value string) bool {
+func (d *Data[k]) Set(keyname k, value string) bool {
 	// validate if value exists first
 	if value != "" {
 		d.data_storage[keyname] = value
