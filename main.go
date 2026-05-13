@@ -37,18 +37,21 @@ func main() {
 
 	// validating whether method given is appropriate (only support for post and get for now)
 	uc := strings.ToUpper(*method)
+	var v string // holding actual method after validating if method is appropriate
 
-	var v string
-	if 	uc == http.MethodGet || uc == http.MethodPost {
-		// fmt.Println("not a valid method")
-		// return
-		v = uc
-	} else {
-		// v = uc
-		fmt.Println("not a valid method")
-		return
+	// simplified
+	allowed := map[string]bool{
+		"GET":  true,
+		"POST": true,
 	}
 
+	if allowed[uc] {
+		v = uc
+	} else {
+		fmt.Println("method not allowed")
+		return
+	}
+	
 	// body reader for post data
 	var body io.Reader
 
