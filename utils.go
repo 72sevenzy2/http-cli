@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (h *HeaderFlags) String() string {
+func (h *HeaderFlags) String() string { // gets called internally by go's flag pkg, (type flag.Value expects a String() and Set() func)
 	return fmt.Sprint(*h)
 }
 
