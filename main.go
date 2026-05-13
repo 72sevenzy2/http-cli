@@ -75,9 +75,17 @@ func main() {
 	} // initialising the client
 
 	// latency tracking
-	start := time.Now()
-	resp, err := client.Do(req)
-	end := time.Since(start)
+	// start := time.Now()
+	// resp, err := client.Do(req)
+	// end := time.Since(start)
+
+	// if err != nil {
+	// 	log.Fatal(err.Error())
+	// 	return
+	// }
+
+	// track latency
+	end, resp, err := Log(client, req)
 
 	if err != nil {
 		log.Fatal(err.Error())
