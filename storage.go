@@ -2,6 +2,8 @@
 
 package main
 
+import "strconv"
+
 type Key interface {
 	string | int // only supports these 2 types for now
 }
@@ -21,8 +23,16 @@ func NewStore[k Key]() *Data[k] {
 
 // for strings
 func (d *Data[k]) Get(keyname k) (string, bool) {
-	val, ok := d.data_storage[keyname]
-	return val, ok
+	// val, ok := d.data_storage[keyname]
+	// return val, ok
+	_, ok := any(keyname).(int)
+	if ok {
+		newKey := strconv.Itoa(any(keyname).(int))
+		val, ok := d.data_storage[any(newKey).(k)]
+		return val, ok
+	}
+	value, ex := d.data_storage[keyname]
+	return value, ex
 }
 
 func (d *Data[k]) Set(keyname k, value string) bool {
