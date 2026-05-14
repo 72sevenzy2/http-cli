@@ -6,7 +6,7 @@ import (
 
 func TestGet() {
 	store := NewStore()
-	ok := store.Set(1, "test")
+	_, ok := store.Set(1, "test")
 	if ok {
 		fmt.Println("data set successfully")
 	} else {

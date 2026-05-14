@@ -19,7 +19,7 @@ func NewStore() *Data {
 }
 
 // normalize key types to string
-func normalize(keyname any) (string, error) {
+func Normalize(keyname any) (string, error) {
 	switch v := any(keyname).(type) {
 	case int:
 		return strconv.Itoa(v), nil
@@ -35,7 +35,7 @@ func normalize(keyname any) (string, error) {
 
 // for strings
 func (d *Data) Get(keyname any) (string, bool) {
-	newKey, err := normalize(keyname)
+	newKey, err := Normalize(keyname)
 	if err != nil {
 		return err.Error(), false
 	}
@@ -44,15 +44,16 @@ func (d *Data) Get(keyname any) (string, bool) {
 	return val, ok
 }
 
-func (d *Data) Set(keyname any, value string) bool {
+func (d *Data) Set(keyname any, value string) (string, bool) {
 	if value == "" {
-		return false
+		errM := errors.New("please include a value")
+		return errM.Error(), false
 	}
 
-	newK, err := normalize(keyname)
+	newK, err := Normalize(keyname)
 	if err != nil {
-		return false
+		return err.Error(), false
 	}
 	d.data_storage[newK] = value
-	return true
+	return "", true
 }
