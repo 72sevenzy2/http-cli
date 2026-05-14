@@ -16,11 +16,19 @@ func Log(v *http.Client, req *http.Request) (time.Duration, *http.Response, erro
 
 	fmt.Println("visited to:", req.URL.Path)
 	fmt.Println("method:", req.Method)
+	// request query
+	if req.URL.RawQuery != "" {
+		fmt.Println("query:", req.URL.RawQuery)
+	}
+
+	fmt.Println("user details:")
+	fmt.Println("client:", req.RemoteAddr)
+
 	// exlude sensitive headers
+	fmt.Println("request header details:")
 	newHeaders := req.Header.Clone()
 	newHeaders.Del("Authorization")
-	fmt.Println("with headers:", newHeaders) // then display
-
+	fmt.Println(newHeaders) // then display
 
 	return end, resp, nil
 }
