@@ -30,6 +30,15 @@ func main() {
 
 	flag.Parse()
 
+	// before validating flag.Args for other features, check is session is set first.
+	if *session {
+		scanner := bufio.NewScanner(os.Stdin)
+		store := NewStore()
+
+		StartSession(scanner, store)
+		return
+	}
+
 	if err := Validate(flag.Args()); err != nil {
 		fmt.Println(errors.New(err.Error()))
 		return
@@ -73,14 +82,6 @@ func main() {
 	if err := AddHeaders(req, headers); err != nil {
 		fmt.Println(err.Error())
 		return
-	}
-
-	// session mode
-	if *session {
-		scanner := bufio.NewScanner(os.Stdin)
-		store := NewStore()
-
-		StartSession(scanner, store)
 	}
 
 	client := &http.Client{
