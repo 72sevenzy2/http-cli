@@ -34,26 +34,26 @@ func Normalize(keyname any) (string, error) {
 // utility get/set functions for data map:
 
 // for strings
-func (d *Data) Get(keyname any) (string, bool) {
+func (d *Data) Get(keyname any) (string, bool, error) {
 	newKey, err := Normalize(keyname)
 	if err != nil {
-		return err.Error(), false
+		return "", false, err
 	}
 
 	val, ok := d.data_storage[newKey]
-	return val, ok
+	return val, ok, nil
 }
 
-func (d *Data) Set(keyname any, value string) (string, bool) {
+func (d *Data) Set(keyname any, value string) (error, bool) {
 	if value == "" {
 		errM := errors.New("please include a value")
-		return errM.Error(), false
+		return errM, false
 	}
 
 	newK, err := Normalize(keyname)
 	if err != nil {
-		return err.Error(), false
+		return err, false
 	}
 	d.data_storage[newK] = value
-	return "", true
+	return nil, true
 }

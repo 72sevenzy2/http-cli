@@ -13,7 +13,7 @@ func TestGet() {
 		fmt.Println("could not save data")
 	}
 
-	val, exists := store.Get(1)
+	val, exists, _ := store.Get(1)
 	if exists {
 		fmt.Println("data exists:", val)
 	} else {
