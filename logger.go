@@ -17,6 +17,7 @@ func Log(v *http.Client, req *http.Request) (time.Duration, *http.Response, erro
 	// fmt.Println("visited to:", req.URL.Path)
 	// fmt.Println("method:", req.Method)
 	fmt.Printf("visited to %s, with method %s", req.URL.Path, req.Method)
+	fmt.Println("full url:", req.URL)
 	// request query
 	if req.URL.RawQuery != "" {
 		fmt.Println("with query:", req.URL.RawQuery)
