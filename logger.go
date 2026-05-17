@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func Log(v *http.Client, req *http.Request) (time.Duration, *http.Response, error) {
+func Log(v *http.Client, req *http.Request, bodyAllowed *bool) (time.Duration, *http.Response, error) {
 	start := time.Now()
 	resp, err := v.Do(req)
 	if err != nil {
@@ -31,6 +31,10 @@ func Log(v *http.Client, req *http.Request) (time.Duration, *http.Response, erro
 	newHeaders := req.Header.Clone()
 	newHeaders.Del("Authorization")
 	fmt.Println(newHeaders) // then display
+
+	// request body printing
+
+	
 
 	return end, resp, nil
 }
