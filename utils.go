@@ -32,7 +32,7 @@ func AddHeaders(req *http.Request, args HeaderFlags) error {
 			return fmt.Errorf("invalid input type %s", h)
 		}
 
-		// appending errors
+		// appending headers
 		req.Header.Set(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
 	}
 	return nil

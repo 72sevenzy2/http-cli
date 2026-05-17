@@ -23,6 +23,7 @@ func main() {
 	flag.Var(&headers, "H", "Header (key:value)")
 	stream := flag.Bool("stream", false, "live response") // for streaming live response
 	method := flag.String("x", "GET", "http method")
+	allowedBody := flag.Bool("b", false, "allow request body logging.")
 
 	data := flag.String("d", "", "request data")
 
@@ -88,7 +89,7 @@ func main() {
 	// }
 
 	// track latency
-	end, resp, err := Log(client, req)
+	end, resp, err := Log(client, req, allowedBody)
 
 	if err != nil {
 		log.Fatal(err.Error())
