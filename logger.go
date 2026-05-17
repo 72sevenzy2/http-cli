@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 )
@@ -34,7 +36,25 @@ func Log(v *http.Client, req *http.Request, bodyAllowed *bool) (time.Duration, *
 
 	// request body printing
 
-	
+	if *bodyAllowed {
+		max := 1024 // 1 kb default (will add customisable max sizes later on)
+		bodybytes, err := io.ReadAll(req.Body)
+		if err != nil {
+			if len(bodybytes) == 0 {
+				fmt.Println("request does not contain any body.")
+			} else {
+				fmt.Println(err.Error())
+			}
+		}
+
+		req.Body = io.NopCloser(bytes.NewBuffer(bodybytes))
+		if len(bodybytes) > max {
+			bodybytes = bodybytes[:max]
+		} else {
+			bodyprev := string(bodybytes)
+			fmt.Println("request body:", bodyprev)
+		}
+	}
 
 	return end, resp, nil
 }
