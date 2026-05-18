@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -23,10 +24,20 @@ func main() {
 	flag.Var(&headers, "H", "Header (key:value)")
 	stream := flag.Bool("stream", false, "live response") // for streaming live response
 	method := flag.String("x", "GET", "http method")
+	session := flag.Bool("session", false, "live interactive mode to store and receive variable-like data.")
 
 	data := flag.String("d", "", "request data")
 
 	flag.Parse()
+
+	// before validating flag.Args for other features, check is session is set first.
+	if *session {
+		scanner := bufio.NewScanner(os.Stdin)
+		store := NewStore()
+
+		StartSession(scanner, store)
+		return
+	}
 
 	if err := Validate(flag.Args()); err != nil {
 		fmt.Println(errors.New(err.Error()))
