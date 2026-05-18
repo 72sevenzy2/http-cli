@@ -20,7 +20,7 @@ func NewStore() *Data {
 
 // normalize key types to string
 func Normalize(keyname any) (string, error) {
-	switch v := any(keyname).(type) {
+	switch v := keyname.(type) {
 	case int:
 		return strconv.Itoa(v), nil
 	case string:
